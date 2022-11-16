@@ -1,0 +1,198 @@
+\documentclass[11pt]{article}
+
+\usepackage{sectsty}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage[dvipsnames]{xcolor}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\title{Lab 5: Voting-based probabilistic consensuses}
+\author{CANEVET Gaspard, COUDRAY Amaury}
+\date{November 16, 2022}
+
+\begin{document}
+\maketitle	
+
+\vspace{10mm}
+
+% Optional TOC
+% \tableofcontents
+% \pagebreak
+
+%--Paper--
+
+\section{Majority dynamics model}
+
+The system consists of n nodes. At each instant $k \in IN^{+}$ :
+\begin{enumerate}
+    \item One node is selected uniformly at random.
+    \item The selected node then chooses three nodes independently and uniformly at random. In particular, it may choose itself, and may choose some nodes more than once (draw with replacement).
+    \item The selected node then adopts the majority opinion of the chosen nodes.
+\end{enumerate}
+
+\noindent We denote by $X_{k}$ the number of nodes with opinion 1 at time k.
+
+\vspace{5mm}
+
+\noindent 1/ For every $m, m' \in \{0, . . . , n\}$, can you describe the probability that $X_{k+1} = m'$ knowing that $X_{k} = m$? 
+
+\vspace{5mm}
+
+\noindent There, we are looking for $P[X_{k+1} = m'|X_{k} = m]$. \\
+- Following the above algorithm we can define two border cases $m=0$ and $m=n$. In both cases, a consensus is found and every nodes have the same opinion.
+In those case we have $m'=m$ and $P[X_{k+1} = m'|X_{k} = m] = 1$ \\
+- Then a more global point of view give us the bellow three possibilities for m': 
+\begin{enumerate}[topsep=0pt, itemsep=0pt]
+    \item m' = m-1 if we pull out a node with opinion 1 at the first step and at least two nodes with opinion 0 at the second step.
+    \item m' = m if we pull out a node with opinion 1 or 0 at the first step and at least two nodes with the same opinion at the second step.
+    \item m' = m+1 if we pull out a node with opinion 0 at the first step and at least two nodes with opinion 1 at the second step.
+\end{enumerate}
+
+
+\noindent We can conclude that:
+\begin{equation}
+    \left \{
+        \begin{array}{r c l}
+            P[X_{k+1} = m'|X_{k} = m] & = & P[X_{k+1} = m-1|X_{k} = m] (a)\\
+            & + &  P[X_{k+1} = m+1|X_{k} = m](b)\\
+            & + &  P[X_{k+1} = m|X_{k} = m](c)
+        \end{array}
+        \right .
+\end{equation}
+
+\noindent Now lets try to solve every parts of this equation.
+
+(a) $P[X_{k+1} = m-1|X_{k} = m]$ = P[pull out a node with opinion 1 at step 1]*P[pull out two nodes with opinion 0 at step 2]. \\
+Thus $P[X_{k+1} = m-1|X_{k} = m]$ = $\frac{m}{n}*(\frac{n-m}{n})^{2}$ (keep in mind that we have m nodes with opinion 1 and n-m nodes with opinion 0)
+
+(b) $P[X_{k+1} = m+1|X_{k} = m]$ = P[pull out a node with opinion 0 at step 1]*P[pull out two nodes with opinion 1 at step 2]. \\
+Thus $P[X_{k+1} = m+1|X_{k} = m]$ = $\frac{n-m}{n}*(\frac{m}{n})^{2}$
+
+(c) $P[X_{k+1} = m|X_{k} = m]$ = P[pull out a node with opinion 0 at step 1]*P[pull out two nodes with opinion 0 at step 2] + P[pull out a node with opinion 1 at step 1]*P[pull out two nodes with opinion 1 at step 2]. \\
+Thus $P[X_{k+1} = m|X_{k} = m]$ = $\frac{n-m}{n}*(\frac{n-m}{n})^{2} + \frac{m}{n}*(\frac{m}{n})^{2}$
+
+\vspace{5mm}
+
+\noindent Finally we have: 
+
+\begin{equation}
+    P[X_{k+1} = m'|X_{k} = m]=
+    \begin{cases}
+        1 & \text{if m=n or 0}\\
+        \frac{1}{n^{3}}*(m*(n-m)^{2} + m^{2}*(n-m) + (n-m)^{3} + m^{3}), & else
+    \end{cases}
+\end{equation}
+
+
+\begin{center}
+    \noindent\rule{8cm}{0.4pt} 
+\end{center}
+
+\vspace{5mm}
+
+\noindent 2/ What are the absorbing states of this Markov chain? What can you conclude?
+
+\vspace{5mm}
+
+\noindent The absorbing point of this Markov chain are m=n or 0. In those case, we already have found a concensus. for example, if we have m=n, we will pull out a node with opinion 1 at step 1 and three node with opinion 1 at step two. Thus the third step will not change the state of the pulled nodes.
+
+
+\begin{center}
+    \noindent\rule{8cm}{0.4pt} 
+\end{center}
+
+
+\noindent Let $\tau_{A}$ := min$\{k \geq 1 : X_{n} \in A\}$ denote the hitting time of the set A. We will also use the
+notations $P_{x}$ and $E_{x}$ for the probability and expectations with respect to the process started at x. The
+following theorem has been proved:
+\begin{center}
+    \colorbox{Gray}{\textbf{Lemma:} For all x $\in$ \{1, . . . , n-1\}, we have that: $E_{x}[\tau_{0,n}] \leq \frac{256}{15}*(1 + log(n))$}
+\end{center}
+
+\vspace{5mm}
+
+\noindent 3/ Can you interpret the result of this lemma? What is it telling in term of performance?
+
+\vspace{5mm}
+
+Lorem Ipsum
+
+\begin{center}
+    \noindent\rule{8cm}{0.4pt} 
+\end{center}
+
+We assume now the presence in the system of Byzantine nodes. Let q $\in$ (0, 12) be the fraction
+of Byzantine nodes in the system. Therefore, among the n nodes, (1 - q)*n are honest (i.e., they follow
+the prescribed protocol), and q*n are Byzantine.
+
+\vspace{5mm}
+
+\noindent 4-1/ We will assume that Byzantine nodes are controlled by a single entity, called the adversary. We
+also assume that this entity knows the current state of the system, in other words, the adversary
+is omniscient. Do you think this assumption is reasonable, or not? Justify your answer. 
+
+\vspace{5mm}
+
+Lorem Ipsum
+
+\vspace{5mm}
+
+\noindent 4-2/ An adversary can have different strategies to modify the output of the voting mechanism. Can
+you give three possible strategies and explain their effects on the final result of the algorithm?
+
+\vspace{5mm}
+
+Lorem Ipsum
+
+\vspace{5mm}
+
+\noindent 4-3/ Now let us consider the following adversarial strategy: ”Help the weakest”. This strategy is
+working as follow: the adversarial nodes will always vote on the less popular opinion among
+the honest nodes. Let $\overline{X_{k}}$ be the number of honest nodes with opinion 1 at instant k. Do you
+think that 0 and 1 are still absorbing states? Can you describe the transition probability of this
+Markov chain, $\overline{X_{k}}$ = m.
+
+\vspace{5mm}
+
+Lorem Ipsum
+
+\vspace{10mm}
+
+\section{Implementations of the fast probabilistic consensus}
+
+\vspace{5mm}
+
+\noindent 5/ What can be a simple attack on the fast probabilistic consensus algorithm proposed
+by Serguei Popov and William J. Buchanan
+
+\vspace{5mm}
+
+Lorem Ipsum
+
+\vspace{5mm}
+
+\noindent 6/ Implement in Go the FPC with the following requirements:
+\begin{itemize}
+    \item The network is composed of five nodes.
+    \item Node 1 is a Byzantine node. It will use the ”Help the weakest” strategy.
+    \item You need measure the time taken by the algorithm to stop and wether or not the algorithm has
+    reached the desired consensus.
+\end{itemize}
+
+\vspace{5mm}
+
+\noindent See code in src folder.
+
+
+
+%--/Paper--
+
+\end{document}

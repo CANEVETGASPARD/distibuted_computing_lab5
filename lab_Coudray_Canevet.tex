@@ -48,7 +48,7 @@ The system consists of n nodes. At each instant $k \in IN^{+}$ :
 
 \noindent There, we are looking for $P[X_{k+1} = m'|X_{k} = m]$. \\
 - Following the above algorithm we can define two border cases $m=0$ and $m=n$. In both cases, a consensus is found and every nodes have the same opinion.
-In those case we have $m'=m$ and $P[X_{k+1} = m'|X_{k} = m] = 1$ \\
+In those cases we have $m'=m$ and $P[X_{k+1} = m'|X_{k} = m] = 1$ \\
 - Then a more global point of view give us the bellow three possibilities for m': 
 \begin{enumerate}[topsep=0pt, itemsep=0pt]
     \item m' = m-1 if we pull out a node with opinion 1 at the first step and at least two nodes with opinion 0 at the second step.
@@ -58,7 +58,7 @@ In those case we have $m'=m$ and $P[X_{k+1} = m'|X_{k} = m] = 1$ \\
 
 \vspace{5mm}
 
-\noindent Now lets try to solve every parts.
+\noindent Now let's try to solve every parts.
 
 (1) $P[X_{k+1} = m-1|X_{k} = m]$ = P[pull out a node with opinion 1 at step 1]*P[pull out two nodes with opinion 0 at step 2]. \\
 Thus $P[X_{k+1} = m-1|X_{k} = m]$ = $\frac{m}{n}*(\frac{n-m}{n})^{2}$ (keep in mind that we have m nodes with opinion 1 and n-m nodes with opinion 0)
@@ -96,7 +96,7 @@ Thus $P[X_{k+1} = m|X_{k} = m]$ = 1 - ($\frac{n-m}{n}*(\frac{m}{n})^{2}$ + $\fra
 
 \vspace{5mm}
 
-\noindent The absorbing point of this Markov chain are m=n or 0. In those case, we already have found a concensus. for example, if we have m=n, we will pull out a node with opinion 1 at step 1 and three node with opinion 1 at step two. Thus the third step will not change the state of the pulled nodes.
+\noindent The absorbing points of this Markov chain are m=n or 0. In those cases, we already have found a concensus. for example, if we have m=n, we will pull out a node with opinion 1 at step 1 and three nodes with opinion 1 at step two. Thus the third step will not change the state of the pulled node.
 
 
 \begin{center}
@@ -117,7 +117,7 @@ following theorem has been proved:
 
 \vspace{5mm}
 
-This lemma tells us that in expectation the algorithm will converge in nlog(n).
+\noindent This lemma tells us that in expectation the algorithm will converge in nlog(n).
 
 \begin{center}
     \noindent\rule{8cm}{0.4pt} 
@@ -135,7 +135,7 @@ is omniscient. Do you think this assumption is reasonable, or not? Justify your 
 
 \vspace{5mm}
 
-This assumption is reasonable because the adversary is the one who controls the Byzantine nodes. Thus, he knows the current state of the system.
+\noindent This assumption is reasonable because the adversary is the one who controls the Byzantine nodes. Thus, he knows the current state of the system.
 
 \vspace{5mm}
 
@@ -144,10 +144,12 @@ you give three possible strategies and explain their effects on the final result
 
 \vspace{5mm}
 
-The adversary can have three different strategies:
-- always the same opinion: the adversary can always give the same opinion to all the honest nodes. 
-- random opinion: the adversary can give a random opinion to all the honest nodes.
-- majority opinion: the adversary can give the majority opinion to all the honest nodes.
+\noindent The adversary can have three different strategies:
+\begin{itemize}
+    \item always the same opinion: the adversary can always give the same opinion to all the honest nodes.
+    \item random opinion: the adversary can give a random opinion to all the honest nodes.
+    \item majority opinion: the adversary can give the majority opinion to all the honest nodes.
+\end{itemize}
 
 \vspace{5mm}
 
@@ -159,7 +161,34 @@ Markov chain, $\overline{X_{k}}$ = m.
 
 \vspace{5mm}
 
-0 and 1 are not absorbing states anymore. The transition probability of this Markov chain is:
+\noindent 0 and n are not absorbing states anymore. For instance, let's assume that m=n, we can pull out a non bynzantine node at step 1 
+with opinion 1 and two byzantine nodes at step two. The two byzantine nodes will provide a message with opinion 0 and thus 
+will change the opinion of the nodes. \\
+The transition probability of this Markov chain is:
+
+si $m < n/2$
+\begin{equation}
+    P[\overline{X_{k+1}} = m'|\overline{X_{k}} = m]=
+    \begin{cases}
+        \frac{m}{n}*(\frac{(1-q)*n-m}{n})^{2} & \text{if m'=m-1}\\
+        \frac{((1-q)*n-m)}{n}*(\frac{m+ q*n}{n})^{2} & \text{if m'=m+1}\\
+        1 - (\frac{m}{n}*(\frac{(1-q)*n-m}{n})^{2} + \frac{((1-q)*n-m)}{n}*(\frac{m+ q*n}{n})^{2}) & \text{if m'=m}\\
+        0 & else
+    \end{cases}
+\end{equation}
+
+si $m > n/2$
+\begin{equation}
+    P[\overline{X_{k+1}} = m'|\overline{X_{k}} = m]=
+    \begin{cases}
+        \frac{m}{n}*(\frac{n-m}{n})^{2} & \text{if m'=m-1}\\
+        \frac{(1-q)*n-m}{n}*(\frac{m}{n})^{2} & \text{if m'=m+1}\\
+        1 - (\frac{m}{n}*(\frac{n-m}{n})^{2} + \frac{(1-q)*n-m}{n}*(\frac{m}{n})^{2}) & \text{if m'=m}\\
+        0 & else
+    \end{cases}
+\end{equation}
+
+
 
 
 \vspace{10mm}
@@ -173,7 +202,7 @@ by Serguei Popov and William J. Buchanan
 
 \vspace{5mm}
 
-U(k) is determined by the random variable U, so the Byzantine node can forecast the value of u(k) and then send a message to prevent the algorithm from converging.
+\noindent U(k) is determined by the random variable U, so the Byzantine node can forecast the value of u(k) and then send a message to prevent the algorithm from converging.
 
 \vspace{5mm}
 
@@ -187,8 +216,8 @@ U(k) is determined by the random variable U, so the Byzantine node can forecast 
 
 \vspace{5mm}
 
-\noindent See code in src folder. Our implementation is incomplete because we did not manage to implement properly u(k) and the Byzantine node.
-
+\noindent See code in src folder. We set $\nu$ to 20 and $\beta$ to 0.2. Without byzantine nodes we converge in 30 interations, roughly speaking.
+With byzantine nodes, the biggest convergence value we have seen was 150k iterations.
 
 
 

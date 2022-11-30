@@ -27,7 +27,7 @@ type Node struct {
 const (
 	NUMBER_OF_NODES_ASKED = 5
 	NUMBER_OF_NODES       = 5
-	TERMINATION           = 30
+	TERMINATION           = 20
 	BETA                  = 0.2
 )
 
@@ -175,7 +175,12 @@ func node(node Node) {
 			if nk < uk {
 				newOpinion = 0
 			}
-
+			if opinion != newOpinion {
+				n = 0
+			} else {
+				n++
+			}
+			opinion = newOpinion
 		} else { // BIZANTINE NODE
 			// bizantine node asking to all nodes
 			for i := 0; i < NUMBER_OF_NODES; i++ {
@@ -193,20 +198,15 @@ func node(node Node) {
 			}
 
 			// updating opinion
-			if temporaryOpinion > NUMBER_OF_NODES/2 {
+			if float64(temporaryOpinion) > float64(NUMBER_OF_NODES/2.0) {
 				newOpinion = 0
 			} else {
 				newOpinion = 1
 			}
+			opinion = newOpinion
 
 		}
 
-		if opinion != newOpinion {
-			n = 0
-		} else {
-			n++
-		}
-		opinion = newOpinion
 		k++
 	}
 	fmt.Println("[Node", node.id, "] TERMINATED WITH OPINION", opinion, "IN", k, "ITERATIONS")

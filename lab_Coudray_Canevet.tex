@@ -135,7 +135,7 @@ is omniscient. Do you think this assumption is reasonable, or not? Justify your 
 
 \vspace{5mm}
 
-
+This assumption is reasonable because the adversary is the one who controls the Byzantine nodes. Thus, he knows the current state of the system.
 
 \vspace{5mm}
 
@@ -144,7 +144,10 @@ you give three possible strategies and explain their effects on the final result
 
 \vspace{5mm}
 
-Lorem Ipsum
+The adversary can have three different strategies:
+- always the same opinion: the adversary can always give the same opinion to all the honest nodes. 
+- random opinion: the adversary can give a random opinion to all the honest nodes.
+- majority opinion: the adversary can give the majority opinion to all the honest nodes.
 
 \vspace{5mm}
 
@@ -156,7 +159,8 @@ Markov chain, $\overline{X_{k}}$ = m.
 
 \vspace{5mm}
 
-Lorem Ipsum
+0 and 1 are not absorbing states anymore. The transition probability of this Markov chain is:
+
 
 \vspace{10mm}
 
@@ -169,7 +173,7 @@ by Serguei Popov and William J. Buchanan
 
 \vspace{5mm}
 
-Lorem Ipsum
+U(k) is determined by the random variable U, so the Byzantine node can forecast the value of u(k) and then send a message to prevent the algorithm from converging.
 
 \vspace{5mm}
 
@@ -183,7 +187,8 @@ Lorem Ipsum
 
 \vspace{5mm}
 
-\noindent See code in src folder.
+\noindent See code in src folder. Our implementation is incomplete because we did not manage to implement properly u(k) and the Byzantine node.
+
 
 
 

@@ -114,7 +114,7 @@ func main() {
 	}
 
 	// WAITING FOR TERMINATION
-	for i := 0; i < NUMBER_OF_NODES; i++ {
+	for i := 1; i < NUMBER_OF_NODES; i++ {
 		<-nodes[i].result
 	}
 

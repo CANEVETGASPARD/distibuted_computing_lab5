@@ -56,28 +56,18 @@ In those case we have $m'=m$ and $P[X_{k+1} = m'|X_{k} = m] = 1$ \\
     \item m' = m+1 if we pull out a node with opinion 0 at the first step and at least two nodes with opinion 1 at the second step.
 \end{enumerate}
 
+\vspace{5mm}
 
-\noindent We can conclude that:
-\begin{equation}
-    \left \{
-        \begin{array}{r c l}
-            P[X_{k+1} = m'|X_{k} = m] & = & P[X_{k+1} = m-1|X_{k} = m] (a)\\
-            & + &  P[X_{k+1} = m+1|X_{k} = m](b)\\
-            & + &  P[X_{k+1} = m|X_{k} = m](c)
-        \end{array}
-        \right .
-\end{equation}
+\noindent Now lets try to solve every parts.
 
-\noindent Now lets try to solve every parts of this equation.
-
-(a) $P[X_{k+1} = m-1|X_{k} = m]$ = P[pull out a node with opinion 1 at step 1]*P[pull out two nodes with opinion 0 at step 2]. \\
+(1) $P[X_{k+1} = m-1|X_{k} = m]$ = P[pull out a node with opinion 1 at step 1]*P[pull out two nodes with opinion 0 at step 2]. \\
 Thus $P[X_{k+1} = m-1|X_{k} = m]$ = $\frac{m}{n}*(\frac{n-m}{n})^{2}$ (keep in mind that we have m nodes with opinion 1 and n-m nodes with opinion 0)
 
-(b) $P[X_{k+1} = m+1|X_{k} = m]$ = P[pull out a node with opinion 0 at step 1]*P[pull out two nodes with opinion 1 at step 2]. \\
+(2) $P[X_{k+1} = m+1|X_{k} = m]$ = P[pull out a node with opinion 0 at step 1]*P[pull out two nodes with opinion 1 at step 2]. \\
 Thus $P[X_{k+1} = m+1|X_{k} = m]$ = $\frac{n-m}{n}*(\frac{m}{n})^{2}$
 
-(c) $P[X_{k+1} = m|X_{k} = m]$ = P[pull out a node with opinion 0 at step 1]*P[pull out two nodes with opinion 0 at step 2] + P[pull out a node with opinion 1 at step 1]*P[pull out two nodes with opinion 1 at step 2]. \\
-Thus $P[X_{k+1} = m|X_{k} = m]$ = $\frac{n-m}{n}*(\frac{n-m}{n})^{2} + \frac{m}{n}*(\frac{m}{n})^{2}$
+(3) $P[X_{k+1} = m|X_{k} = m]$ = 1 - ($P[X_{k+1} = m+1|X_{k} = m]$ + $P[X_{k+1} = m-1|X_{k} = m]$)
+Thus $P[X_{k+1} = m|X_{k} = m]$ = 1 - ($\frac{n-m}{n}*(\frac{m}{n})^{2}$ + $\frac{m}{n}*(\frac{n-m}{n})^{2}$)
 
 \vspace{5mm}
 
@@ -87,7 +77,11 @@ Thus $P[X_{k+1} = m|X_{k} = m]$ = $\frac{n-m}{n}*(\frac{n-m}{n})^{2} + \frac{m}{
     P[X_{k+1} = m'|X_{k} = m]=
     \begin{cases}
         1 & \text{if m=n or 0}\\
-        \frac{1}{n^{3}}*(m*(n-m)^{2} + m^{2}*(n-m) + (n-m)^{3} + m^{3}), & else
+        \frac{m}{n}*(\frac{n-m}{n})^{2} & \text{if m'=m-1}\\
+        \frac{n-m}{n}*(\frac{m}{n})^{2} & \text{if m'=m+1}\\
+        1 - (\frac{n-m}{n}*(\frac{m}{n})^{2} + \frac{m}{n}*(\frac{n-m}{n})^{2}) & \text{if m'=m}\\
+        0 & else
+
     \end{cases}
 \end{equation}
 
@@ -114,7 +108,7 @@ Thus $P[X_{k+1} = m|X_{k} = m]$ = $\frac{n-m}{n}*(\frac{n-m}{n})^{2} + \frac{m}{
 notations $P_{x}$ and $E_{x}$ for the probability and expectations with respect to the process started at x. The
 following theorem has been proved:
 \begin{center}
-    \colorbox{Gray}{\textbf{Lemma:} For all x $\in$ \{1, . . . , n-1\}, we have that: $E_{x}[\tau_{0,n}] \leq \frac{256}{15}*(1 + log(n))$}
+    \colorbox{Gray}{\textbf{Lemma:} For all x $\in$ \{1, . . . , n-1\}, we have that: $E_{x}[\tau_{0,n}] \leq \frac{256}{15}n*(1 + log(n))$}
 \end{center}
 
 \vspace{5mm}
@@ -123,7 +117,7 @@ following theorem has been proved:
 
 \vspace{5mm}
 
-Lorem Ipsum
+This lemma tells us that in expectation the algorithm will converge in nlog(n).
 
 \begin{center}
     \noindent\rule{8cm}{0.4pt} 
@@ -141,7 +135,7 @@ is omniscient. Do you think this assumption is reasonable, or not? Justify your 
 
 \vspace{5mm}
 
-Lorem Ipsum
+
 
 \vspace{5mm}
 

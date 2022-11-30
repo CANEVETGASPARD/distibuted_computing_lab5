@@ -27,7 +27,7 @@ type Node struct {
 const (
 	NUMBER_OF_NODES_ASKED = 5
 	NUMBER_OF_NODES       = 5
-	TERMINATION           = 10
+	TERMINATION           = 30
 	BETA                  = 0.2
 )
 
@@ -115,8 +115,7 @@ func main() {
 
 	// WAITING FOR TERMINATION
 	for i := 0; i < NUMBER_OF_NODES; i++ {
-		result := <-nodes[i].result
-		fmt.Println("[Node", i, "] TERMINATED WITH OPINION", result)
+		<-nodes[i].result
 	}
 
 }
@@ -125,56 +124,83 @@ func node(node Node) {
 	n := 0
 	k := 0
 	opinion := rand.Intn(2)
+	newOpinion := opinion
 	fmt.Println("[Node", node.id, "] STARTED WITH OPINION", opinion)
+
+	// handling ask
+	for i := 0; i < len(node.communications); i++ {
+		go func(currentOpinion *int, index int) {
+			for {
+				select {
+				case <-node.communications[index].ask_ji:
+					opinionSend := *currentOpinion
+					node.communications[index].callback_ji <- opinionSend
+				}
+			}
+		}(&opinion, i)
+	}
+
 	for n < TERMINATION {
 		temporaryOpinion := 0
 
-		// selecting randomly node id asked
-		node_asked := make([]int, NUMBER_OF_NODES_ASKED)
-		for i := 0; i < NUMBER_OF_NODES_ASKED; i++ {
-			node_asked[i] = rand.Intn(NUMBER_OF_NODES)
-		}
+		// NORMAL NODE
+		if node.id != 0 {
+			// selecting randomly node id asked
+			node_asked := make([]int, NUMBER_OF_NODES_ASKED)
+			for i := 0; i < NUMBER_OF_NODES_ASKED; i++ {
+				node_asked[i] = rand.Intn(NUMBER_OF_NODES)
+			}
 
-		// sending ask to nodes
-		for i := 0; i < NUMBER_OF_NODES_ASKED; i++ {
-			com := findComToAsk(node_asked[i], node)
-			com.ask_ij <- 1
-		}
+			// sending ask to nodes
+			for i := 0; i < NUMBER_OF_NODES_ASKED; i++ {
+				com := findComToAsk(node_asked[i], node)
+				com.ask_ij <- 1
+			}
 
-		// handling ask
-		for i := 0; i < len(node.communications); i++ {
-			go func(currentOpinion *int, index int) {
-				for {
-					select {
-					case <-node.communications[index].ask_ji:
-						opinionSend := *currentOpinion
-						node.communications[index].callback_ji <- opinionSend
-					}
+			// handling response
+			for i := 0; i < NUMBER_OF_NODES_ASKED; i++ {
+				com := findComToAsk(node_asked[i], node)
+				select {
+				case opinion := <-com.callback_ij:
+					temporaryOpinion += opinion
 				}
-			}(&opinion, i)
-		}
+			}
+			// updating opinion
+			nk := float64(temporaryOpinion) / float64(NUMBER_OF_NODES_ASKED)
+			uk := float64(U(k))
 
-		// handling response
-		for i := 0; i < NUMBER_OF_NODES_ASKED; i++ {
-			com := findComToAsk(node_asked[i], node)
-			select {
-			case opinion := <-com.callback_ij:
-				temporaryOpinion += opinion
+			if nk > uk {
+				newOpinion = 1
+			}
+			if nk < uk {
+				newOpinion = 0
+			}
+
+		} else { // BIZANTINE NODE
+			// bizantine node asking to all nodes
+			for i := 0; i < NUMBER_OF_NODES; i++ {
+				com := findComToAsk(i, node)
+				com.ask_ij <- 1
+			}
+
+			// handling response
+			for i := 0; i < NUMBER_OF_NODES; i++ {
+				com := findComToAsk(i, node)
+				select {
+				case opinion := <-com.callback_ij:
+					temporaryOpinion += opinion
+				}
+			}
+
+			// updating opinion
+			if temporaryOpinion > NUMBER_OF_NODES/2 {
+				newOpinion = 0
+			} else {
+				newOpinion = 1
 			}
 
 		}
 
-		// updating opinion
-		nk := float64(temporaryOpinion) / float64(NUMBER_OF_NODES_ASKED)
-		uk := float64(U(k))
-
-		newOpinion := opinion
-		if nk > uk {
-			newOpinion = 1
-		}
-		if nk < uk {
-			newOpinion = 0
-		}
 		if opinion != newOpinion {
 			n = 0
 		} else {
@@ -183,6 +209,7 @@ func node(node Node) {
 		opinion = newOpinion
 		k++
 	}
+	fmt.Println("[Node", node.id, "] TERMINATED WITH OPINION", opinion, "IN", k, "ITERATIONS")
 	node.result <- opinion
 }
 
